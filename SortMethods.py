@@ -11,7 +11,11 @@ from QuickSort import quick_sort as quick
 from MergeSort import merge_sort
 # Consumo de la API de datosgov
 def obtener_datos():
-    response = requests.get(url="https://www.datos.gov.co/resource/axk9-g2nh.json")
+    # Añade el parámetro "$limit" para limitar el número de registros a 500
+    params = {
+        "$limit": 500  # Especifica el número máximo de registros
+    }
+    response = requests.get(url="https://www.datos.gov.co/resource/dyy8-9s4r.json", params=params)
     datos = json.loads(response.text)
     return pd.DataFrame(datos), datos
 
@@ -20,7 +24,6 @@ def ordenamiento():
     columna_ordenar = columna_combobox.get()
 
     #Metodos de ordenamiento elegidos por el usuario
-    df_ordenado = None
     if metodo_ordenamiento == "QuickSort":
         lista_ordenada = quick(lista_datos, columna_ordenar)
         df_ordenado = pd.DataFrame(lista_ordenada)
@@ -32,8 +35,16 @@ def ordenamiento():
     return df_ordenado
 def mostrar_resultados():
     columna_ordenar = columna_combobox.get()
+
+    for item in lista_datos:
+        for key, value in item.items():
+            if value.isdigit():  # Verifica si el valor es numérico
+                item[key] = int(value)
+            else:
+                pass
+
     df_ordenado = ordenamiento()
-    
+
     # Crear un gráfico de barras
     figure = Figure(figsize=(5, 4), dpi=100)
     ax = figure.add_subplot(111)
@@ -72,6 +83,7 @@ metodo_label = ttk.Label(frame_principal, text="Método de Ordenamiento:")
 metodo_combobox = ttk.Combobox(frame_principal, values=["QuickSort","MergeSort"])  # Agrega otros métodos si es necesario
  
 columna_label = ttk.Label(frame_principal, text="Columna a Ordenar:")
+
 # Limpiar los nombres de las columnas
 columnas_limpias = [col.strip("',") for col in datos.columns]
 columna_combobox = ttk.Combobox(frame_principal, values=columnas_limpias)
