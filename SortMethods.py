@@ -7,8 +7,13 @@ from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.ticker as ticker
-from QuickSort import quick_sort as quick
+
+from QuickSort import quick_sort
 from MergeSort import merge_sort
+from BucketSort import bucket_sort
+from HeapSort import heap_sort 
+from CountingSort import counting_sort
+from RadixSort import radix_sort
 # Consumo de la API de datosgov
 def obtener_datos():
     # Añade el parámetro "$limit" para limitar el número de registros a 500
@@ -23,16 +28,35 @@ def ordenamiento():
     metodo_ordenamiento = metodo_combobox.get()
     columna_ordenar = columna_combobox.get()
 
+
     #Metodos de ordenamiento elegidos por el usuario
     if metodo_ordenamiento == "QuickSort":
-        lista_ordenada = quick(lista_datos, columna_ordenar)
+        lista_ordenada = quick_sort(lista_datos, columna_ordenar)
         df_ordenado = pd.DataFrame(lista_ordenada)
 
-    if metodo_ordenamiento == "MergeSort":
+    elif metodo_ordenamiento == "MergeSort":
         lista_ordenada = merge_sort(lista_datos, columna_ordenar)
         df_ordenado = pd.DataFrame(lista_ordenada)
-    
+
+    elif metodo_ordenamiento == "HeapSort":
+        lista_ordenada = heap_sort(lista_datos)
+        df_ordenado = pd.DataFrame(lista_ordenada)
+
+    elif metodo_ordenamiento == "CountingSort":
+        lista_ordenada = counting_sort(lista_datos, columna_ordenar)
+        df_ordenado = pd.DataFrame(lista_ordenada)
+
+    elif metodo_ordenamiento == "RadixSort":
+        lista_ordenada = radix_sort(lista_datos)
+        df_ordenado = pd.DataFrame(lista_ordenada)
+
+    elif metodo_ordenamiento == "BucketSort":
+        lista_ordenada = bucket_sort(lista_datos)
+        df_ordenado = pd.DataFrame(lista_ordenada)
+
     return df_ordenado
+
+
 def mostrar_resultados():
     columna_ordenar = columna_combobox.get()
 
@@ -80,7 +104,7 @@ frame_principal.pack()
 
 # Crear los widgets
 metodo_label = ttk.Label(frame_principal, text="Método de Ordenamiento:")
-metodo_combobox = ttk.Combobox(frame_principal, values=["QuickSort","MergeSort"])  # Agrega otros métodos si es necesario
+metodo_combobox = ttk.Combobox(frame_principal, values=["QuickSort","MergeSort","HeapSort","CountingSort","RadixSort","BucketSort"])
  
 columna_label = ttk.Label(frame_principal, text="Columna a Ordenar:")
 
