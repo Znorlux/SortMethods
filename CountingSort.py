@@ -1,4 +1,3 @@
-#No funciona porque solo retorna dos columnas
 def counting_sort(arr, columna):
     # Encontrar el valor máximo en la columna
     max_val = max(arr, key=lambda x: x[columna])
@@ -11,9 +10,11 @@ def counting_sort(arr, columna):
     for elemento in arr:
         count[elemento[columna]] += 1
 
-    # Reconstruir el arreglo ordenado
+    # Reconstruir el arreglo ordenado con todas las columnas
     sorted_arr = []
     for i in range(max_val + 1):
-        sorted_arr.extend([i] * count[i])
+        for elemento in arr:
+            if elemento[columna] == i:
+                sorted_arr.append(elemento)
 
     return sorted_arr
