@@ -14,12 +14,12 @@ from BucketSort import bucket_sort
 from HeapSort import heap_sort 
 from CountingSort import counting_sort
 from RadixSort import radix_sort
-# Consumo de la API de datosgov
 
+# Consumo de la API de datosgov
 def obtener_datos():
-    # Añade el parámetro "$limit" para limitar el número de registros a 500
+
     params = {
-        "$limit": 500  # Especifica el número máximo de registros
+        "$limit": 100 #Limite de filas que queremos tener de la API
     }
     response = requests.get(url="https://www.datos.gov.co/resource/dyy8-9s4r.json", params=params)
     datos = json.loads(response.text)
@@ -28,7 +28,6 @@ def obtener_datos():
 def ordenamiento():
     metodo_ordenamiento = metodo_combobox.get()
     columna_ordenar = columna_combobox.get()
-
 
     #Metodos de ordenamiento elegidos por el usuario
     if metodo_ordenamiento == "QuickSort":
@@ -57,10 +56,10 @@ def ordenamiento():
 
     return df_ordenado
 
-# Grafico de barras
 def mostrar_resultados():
-    columna_ordenar = columna_combobox.get()
+    columna_ordenar = columna_combobox.get() #Obtenemos la columna que decidió ordenar el usuario
 
+    # En caso de que la API tenga valores numericos que realmente están guardados como string, los volvemos int
     for item in lista_datos:
         for key, value in item.items():
             if isinstance(value, str) and value.isdigit():
@@ -69,25 +68,34 @@ def mostrar_resultados():
 
     df_ordenado = ordenamiento()
 
-    # Crear un nuevo gráfico
+    # Grafico de barras para visualizar los datos y sus valores
     figure = Figure(figsize=(5, 4), dpi=100)
     ax = figure.add_subplot(111)
     ax.bar(df_ordenado.index, df_ordenado[columna_ordenar])
     ax.set_xlabel("Índice")
     ax.set_ylabel(columna_ordenar)
 
-    #Borramos el widget del gráfico anterior (si existe)
+    #En caso de que haya un grafico ya hecho, lo borraremos (ocurre despues del primer uso)
     for widget in frame_grafico.winfo_children():
         widget.destroy()
 
     canvas = FigureCanvasTkAgg(figure, master=frame_grafico)
     canvas.get_tk_widget().pack()
     
-    # Crear una tabla
+    # Creamos una tabla la cual simplemente será una vista de nuestro dataframe con nuestros datos
     treeview.delete(*treeview.get_children())
     for index, row in df_ordenado.iterrows():
         treeview.insert("", "end", values=[index] + list(row))
 
+
+'''
+███████╗ ██████╗ ██████╗ ████████╗    ███╗   ███╗███████╗████████╗██╗  ██╗ ██████╗ ██████╗ ███████╗
+██╔════╝██╔═══██╗██╔══██╗╚══██╔══╝    ████╗ ████║██╔════╝╚══██╔══╝██║  ██║██╔═══██╗██╔══██╗██╔════╝
+███████╗██║   ██║██████╔╝   ██║       ██╔████╔██║█████╗     ██║   ███████║██║   ██║██║  ██║███████╗
+╚════██║██║   ██║██╔══██╗   ██║       ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
+███████║╚██████╔╝██║  ██║   ██║       ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
+╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝       ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝                                                                                                                                                                                                                    
+'''
 #Codigo principal
 if __name__ == '__main__':
     # Crear la ventana principal
